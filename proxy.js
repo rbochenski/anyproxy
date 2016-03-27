@@ -136,7 +136,7 @@ function proxyServer(option){
 
             //start proxy server
             function(callback){
-                self.httpProxyServer.listen(proxyPort);
+                self.httpProxyServer.listen(proxyPort, proxyHost);
                 callback(null);
             },
 
@@ -155,7 +155,7 @@ function proxyServer(option){
                         port         : proxyWebPort,
                         wsPort       : socketPort,
                         userRule     : proxyRules,
-                        ip           : ip.address()
+                        ip           : proxyHost || ip.address()
                     };
 
                     self.webServerInstance = new webInterface(config);
@@ -184,11 +184,12 @@ function proxyServer(option){
         function(err,result){
             if(!err){
                 var webTip,webUrl;
-                webUrl = "http://" + ip.address() + ":" + proxyWebPort +"/";
-                webTip = "GUI interface started at : " + webUrl;
-                logUtil.printLog(color.green(webTip));
-
-                var tipText = (proxyType == T_TYPE_HTTP ? "Http" : "Https") + " proxy started at " + color.bold(ip.address() + ":" + proxyPort);
+                if (!disableWebInterface) {
+                    webUrl = "http://" + ip.address() + ":" + proxyWebPort + "/";
+                    webTip = "GUI interface started at : " + webUrl;
+                    logUtil.printLog(color.green(webTip));
+                }
+                var tipText = (proxyType == T_TYPE_HTTP ? "Http" : "Https") + " proxy started at " + color.bold(proxyHost + ":" + proxyPort);
                 logUtil.printLog(color.green(tipText));
             }else{
                 var tipText = "err when start proxy server :(";
