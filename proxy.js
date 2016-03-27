@@ -64,6 +64,7 @@ function proxyServer(option){
         socketPort          = option.socketPort    || DEFAULT_WEBSOCKET_PORT, //port for websocket
         proxyConfigPort     = option.webConfigPort || DEFAULT_CONFIG_PORT,    //port to ui config server
         disableWebInterface = !!option.disableWebInterface,
+        disableRecorder     = !!option.disableRecorder,
         ifSilent            = !!option.silent;
 
     if(ifSilent){
@@ -98,6 +99,9 @@ function proxyServer(option){
         [
             //clear cache dir, prepare recorder
             function(callback){
+                if (disableRecorder)
+                    return callback();
+
                 util.clearCacheDir(function(){
                     if(option.dbFile){
                         GLOBAL.recorder = new Recorder({filename: option.dbFile});
